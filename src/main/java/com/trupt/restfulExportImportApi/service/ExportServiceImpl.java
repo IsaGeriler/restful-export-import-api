@@ -17,8 +17,9 @@ public class ExportServiceImpl implements ExportService {
     private final ExporterUtil exporterUtil;
 
     @Override
-    public ByteArrayInputStream exportToFile(List<String> cellHeadersList, boolean calculateAverage, boolean calculateSum) {
+    public ByteArrayInputStream exportToFile() {
         List<?> list = userRepository.findAll().stream().map(UserViewDTO::of).toList();
-        return exporterUtil.exportFile(list, cellHeadersList, calculateAverage, calculateSum);
+        // Locale locale = LocaleContextHolder.getLocale();
+        return exporterUtil.exportFile(list);
     }
 }
