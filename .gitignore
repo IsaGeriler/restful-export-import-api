@@ -1,0 +1,5 @@
+.idea
+*.xlsx
+target
+*.iml
+data
