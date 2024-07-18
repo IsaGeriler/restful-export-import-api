@@ -20,7 +20,7 @@ public class ExportServiceImpl implements ExportService {
     @Override
     public ByteArrayInputStream exportToFile() {
         List<?> list = userRepository.findAll().stream().map(UserViewDTO::of).toList();
-        Locale locale = Locale.of("ja"); // locale: "en_US" (language: en, country/region: US)
+        Locale locale = Locale.of("ja"); // locale: "ja" (language: ja)
         return exporterUtil.exportFile(list, locale);
     }
 }
