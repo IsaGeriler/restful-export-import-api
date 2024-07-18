@@ -9,6 +9,7 @@ import org.trupt.utils.ExporterUtil;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +20,7 @@ public class ExportServiceImpl implements ExportService {
     @Override
     public ByteArrayInputStream exportToFile() {
         List<?> list = userRepository.findAll().stream().map(UserViewDTO::of).toList();
-        // Locale locale = LocaleContextHolder.getLocale();
-        return exporterUtil.exportFile(list);
+        Locale locale = Locale.of("ja"); // locale: "en_US" (language: en, country/region: US)
+        return exporterUtil.exportFile(list, locale);
     }
 }

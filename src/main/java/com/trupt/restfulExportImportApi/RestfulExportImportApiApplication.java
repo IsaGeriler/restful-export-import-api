@@ -9,13 +9,13 @@ import org.trupt.utils.ImporterUtil;
 @SpringBootApplication
 public class RestfulExportImportApiApplication {
     @Bean
-    public ImporterUtil importerUtil() {
-        return new ImporterUtil();
+    public ExporterUtil exporterUtil() {
+        return new ExporterUtil();
     }
 
     @Bean
-    public ExporterUtil exporterUtil() {
-        return new ExporterUtil();
+    public ImporterUtil importerUtil() {
+        return new ImporterUtil();
     }
 
     public static void main(String[] args) {
