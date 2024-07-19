@@ -7,21 +7,21 @@ import java.math.BigDecimal;
 
 @Data
 public class UserUpdateDTO {
-    @NotNull(message = "{restfulExportImportApi.constraints.name.NotNull.message}")
-    @Size(min = 2, max = 50, message = "{restfulExportImportApi.constraints.name.Size.message}")
+    @NotNull
+    @Size(min = 2, max = 50)
     private String name;
 
-    @NotNull(message = "{restfulExportImportApi.constraints.surname.NotNull.message}")
-    @Size(min = 2, max = 50, message = "{restfulExportImportApi.constraints.surname.Size.message}")
+    @NotNull
+    @Size(min = 2, max = 50)
     private String surname;
 
-    @NotNull(message = "{restfulExportImportApi.constraints.height.NotNull.message}")
-    @Min(value = 40, message = "{restfulExportImportApi.constraints.height.Min.message}")
-    @Max(value = 273, message = "{restfulExportImportApi.constraints.height.Max.message}")
+    @NotNull
+    @Min(value = 40)
+    @Max(value = 273)
     private int height;
 
-    @NotNull(message = "{restfulExportImportApi.constraints.weight.NotNull.message}")
-    @DecimalMin(value = "2.0", message = "{restfulExportImportApi.constraints.weight.DecimalMin.message}")
-    @DecimalMax(value = "635.0", message = "{restfulExportImportApi.constraints.weight.DecimalMax.message}")
+    @NotNull
+    @DecimalMin(value = "2.0")
+    @DecimalMax(value = "635.0")
     private BigDecimal weight;
 }

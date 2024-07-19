@@ -24,7 +24,6 @@ public class ExportApi {
     @GetMapping("/user")
     public ResponseEntity<InputStreamResource> exportToFile(@RequestParam(name = "lang", required = false) String lang,
                                                             HttpServletRequest request, HttpServletResponse response) {
-        // Set the locale if specified
         Locale locale = localeResolver.resolveLocale(request);
 
         if (lang != null && !lang.isEmpty()) {
