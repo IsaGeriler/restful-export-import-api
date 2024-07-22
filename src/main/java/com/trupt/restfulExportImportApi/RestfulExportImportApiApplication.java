@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.trupt.utils.ExporterUtil;
 import org.trupt.utils.ImporterUtil;
 
+import java.util.Locale;
+
 @SpringBootApplication
 public class RestfulExportImportApiApplication {
     @Bean
@@ -19,6 +21,7 @@ public class RestfulExportImportApiApplication {
     }
 
     public static void main(String[] args) {
+        Locale.setDefault(Locale.of("en"));
         SpringApplication.run(RestfulExportImportApiApplication.class, args);
     }
 }
