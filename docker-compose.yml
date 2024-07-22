@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  restful-export-import-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - SPRING_APPLICATION_NAME=restful-export-import-api
+      - SPRING_DATASOURCE_URL=jdbc:h2:file:/app/data/projectdb
+      - SPRING_DATASOURCE_DRIVERCLASSNAME=org.h2.Driver
+      - SPRING_DATASOURCE_USERNAME=sa
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_SQL_INIT_PLATFORM=h2
+      - SPRING_H2_CONSOLE_ENABLED=true
+      - SPRING_H2_CONSOLE_PATH=/h2-console
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_OPEN_IN_VIEW=true
+      - SPRING_MESSAGES_ENCODING=UTF-8
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  data:
