@@ -25,12 +25,14 @@ public class ExportApi {
     public ResponseEntity<InputStreamResource> exportToFile(@RequestParam(name = "lang", required = false) String lang,
                                                             HttpServletRequest request, HttpServletResponse response) {
         Locale locale = localeResolver.resolveLocale(request);
+        System.out.println("Initial Locale: " + locale.getLanguage());
 
         if (lang != null && !lang.isEmpty()) {
-            locale = Locale.of(lang);
+            locale = Locale.forLanguageTag(lang);
         }
 
         localeResolver.setLocale(request, response, locale);
+        System.out.println("Updated Locale: " + locale.getLanguage());
 
         ByteArrayInputStream data = exportService.exportToFile(locale);
         InputStreamResource file = new InputStreamResource(data);
@@ -38,6 +40,8 @@ public class ExportApi {
         String filename = "UsersList";
         String extension = ".xlsx";
         String langAbbrevation = locale.getLanguage().toUpperCase();
+
+        System.out.println("Language: " + langAbbrevation + "[" + locale.getLanguage() + "]");
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("application/octet-stream"))
