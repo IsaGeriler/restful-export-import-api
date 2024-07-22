@@ -21,7 +21,6 @@ public class RestfulExportImportApiApplication {
     }
 
     public static void main(String[] args) {
-        Locale.setDefault(Locale.of("en"));
         SpringApplication.run(RestfulExportImportApiApplication.class, args);
     }
 }
