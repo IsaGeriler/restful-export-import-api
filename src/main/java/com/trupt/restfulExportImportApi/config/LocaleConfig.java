@@ -12,14 +12,13 @@ import java.util.Locale;
 
 @Configuration
 public class LocaleConfig implements WebMvcConfigurer {
-    /*@Deprecated
-    @Bean
-    public LocaleResolver localeResolver() {
-        SessionLocaleResolver sessionLocaleResolver = new SessionLocaleResolver();
-        // sessionLocaleResolver.setDefaultLocale(Locale.forLanguageTag("en"));
-        sessionLocaleResolver.setDefaultLocale(Locale.ENGLISH);
-        return sessionLocaleResolver;
-    }*/
+    // @Bean
+    // public LocaleResolver localeResolver() {
+        // SessionLocaleResolver sessionLocaleResolver = new SessionLocaleResolver();
+        // // sessionLocaleResolver.setDefaultLocale(Locale.forLanguageTag("en"));
+        // sessionLocaleResolver.setDefaultLocale(Locale.ENGLISH);
+        // return sessionLocaleResolver;
+    // }
 
     @Bean
     public LocaleResolver localeResolver() {
