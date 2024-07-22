@@ -6,8 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.trupt.utils.ExporterUtil;
 import org.trupt.utils.ImporterUtil;
 
-import java.util.Locale;
-
 @SpringBootApplication
 public class RestfulExportImportApiApplication {
     @Bean
