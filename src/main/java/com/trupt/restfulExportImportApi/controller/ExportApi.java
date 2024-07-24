@@ -1,6 +1,8 @@
 package com.trupt.restfulExportImportApi.controller;
 
 import com.trupt.restfulExportImportApi.service.ExportService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -17,11 +19,13 @@ import java.util.Locale;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/export")
+@Tag(name = "Exporter")
 public class ExportApi {
     private final ExportService exportService;
     private final LocaleResolver localeResolver;
 
     @GetMapping("/user")
+    @Operation(description = "Export user data from database to internationalized (I18N) .xlsx")
     public ResponseEntity<InputStreamResource> exportToFile(@RequestParam(name = "lang", required = false) String lang,
                                                             HttpServletRequest request, HttpServletResponse response) {
         Locale locale = localeResolver.resolveLocale(request);
@@ -45,8 +49,8 @@ public class ExportApi {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("application/octet-stream"))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename
-                        + "(" + langAbbrevation + ")" + extension)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename +
+                        "(" + langAbbrevation + ")" + extension)
                 .body(new InputStreamResource(file));
     }
 }

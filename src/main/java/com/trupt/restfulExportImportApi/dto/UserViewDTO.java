@@ -11,22 +11,22 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 public class UserViewDTO {
-    @ExcelCellHeader(headerName="userName", isRequired=true)
+    @ExcelCellHeader(headerName="userName", isRequired = true)
     private String name;
 
-    @ExcelCellHeader(headerName="userSurname", isRequired=true)
+    @ExcelCellHeader(headerName="userSurname", isRequired = true)
     private String surname;
 
     @ExcelCellHeader(headerName="userAge", calculateAverage = true, calculateSum = true)
     private int age;
 
-    @ExcelCellHeader(headerName="userHeight", isRequired=true, calculateAverage = true)
+    @ExcelCellHeader(headerName="userHeight", isRequired = true, calculateAverage = true)
     private int height;
 
-    @ExcelCellHeader(headerName="userWeight", isRequired=true, calculateAverage = true)
+    @ExcelCellHeader(headerName="userWeight", isRequired = true, calculateAverage = true)
     private BigDecimal weight;
 
-    @ExcelCellHeader(headerName="userBirthdate", isRequired=true)
+    @ExcelCellHeader(headerName="userBirthdate", isRequired = true)
     private LocalDate birthdate;
 
     public static UserViewDTO of(User user) {

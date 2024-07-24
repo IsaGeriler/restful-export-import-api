@@ -23,7 +23,6 @@ public class ImportServiceImpl implements ImportService {
     private final ImporterUtil importerUtil;
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<UserViewDTO> importUserFile(MultipartFile file, Class<?> type) throws Exception {
         Path tempPath = Files.createTempDirectory("");
         File tempFile = tempPath.resolve(Objects.requireNonNull(file.getOriginalFilename())).toFile();

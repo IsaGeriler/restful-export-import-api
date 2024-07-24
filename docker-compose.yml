@@ -2,6 +2,8 @@ version: '3.8'
 
 services:
   restful-export-import-api:
+    image: restful-export-import-api:latest
+    container_name: restful_export_import_api_springboot_container
     build:
       context: .
       dockerfile: Dockerfile
@@ -11,18 +13,26 @@ services:
       - ./data:/app/data
     environment:
       - SPRING_APPLICATION_NAME=restful-export-import-api
-      - SPRING_DATASOURCE_URL=jdbc:h2:file:/app/data/projectdb
-      - SPRING_DATASOURCE_DRIVERCLASSNAME=org.h2.Driver
-      - SPRING_DATASOURCE_USERNAME=sa
-      - SPRING_DATASOURCE_PASSWORD=password
-      - SPRING_SQL_INIT_PLATFORM=h2
-      - SPRING_H2_CONSOLE_ENABLED=true
-      - SPRING_H2_CONSOLE_PATH=/h2-console
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      - SPRING_JPA_OPEN_IN_VIEW=true
-      - SPRING_MESSAGES_ENCODING=UTF-8
+      - SPRING_PROFILES_ACTIVE=postgresql
     networks:
       - app-network
+    depends_on:
+      - postgresql
+
+  postgresql:
+    image: postgres:latest
+    container_name: postgres_server
+    restart: always
+    environment:
+      POSTGRES_DB: api_project_db_docker
+      POSTGRES_USER: multiservice
+      POSTGRES_PASSWORD: 123456
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+    volumes:
+      - postgres:/data/postgres
 
 networks:
   app-network:
@@ -30,3 +40,4 @@ networks:
 
 volumes:
   data:
+  postgres:
