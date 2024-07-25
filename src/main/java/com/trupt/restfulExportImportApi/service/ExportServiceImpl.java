@@ -18,7 +18,7 @@ public class ExportServiceImpl implements ExportService {
     private final ExporterUtil exporterUtil;
 
     @Override
-    public ByteArrayInputStream exportToFile(Locale locale) {
+    public ByteArrayInputStream exportUsersToFile(Locale locale) {
         List<?> list = userRepository.findAll().stream().map(UserViewDTO::of).toList();
         return exporterUtil.exportFile(list, locale);
     }

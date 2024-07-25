@@ -13,11 +13,9 @@ services:
       - ./data:/app/data
     environment:
       - SPRING_APPLICATION_NAME=restful-export-import-api
-      - SPRING_PROFILES_ACTIVE=postgresql
+      - SPRING_PROFILES_ACTIVE=mysql
     networks:
       - app-network
-    depends_on:
-      - postgresql
 
   postgresql:
     image: postgres:latest
@@ -34,6 +32,21 @@ services:
     volumes:
       - postgres:/data/postgres
 
+  mysql:
+    image: mysql:8
+    container_name: mysql-server
+    environment:
+      MYSQL_DATABASE: api_project_mysqldb_docker
+      MYSQL_USER: multiservice
+      MYSQL_PASSWORD: 123456
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+    volumes:
+      - mysql:/var/lib/mysql
+
 networks:
   app-network:
     driver: bridge
@@ -41,3 +54,4 @@ networks:
 volumes:
   data:
   postgres:
+  mysql:
