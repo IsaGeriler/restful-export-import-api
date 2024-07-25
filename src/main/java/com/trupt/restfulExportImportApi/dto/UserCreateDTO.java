@@ -20,7 +20,7 @@ public class UserCreateDTO {
     @NotNull
     @Min(value = 40)
     @Max(value = 273)
-    private int height;
+    private Integer height;
 
     @NotNull
     @DecimalMin(value = "2.00")

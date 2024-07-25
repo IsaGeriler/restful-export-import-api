@@ -3,22 +3,26 @@ package com.trupt.restfulExportImportApi.service;
 import com.trupt.restfulExportImportApi.dto.UserCreateDTO;
 import com.trupt.restfulExportImportApi.dto.UserUpdateDTO;
 import com.trupt.restfulExportImportApi.dto.UserViewDTO;
+import com.trupt.restfulExportImportApi.exception.ReflectionUpdateException;
 import com.trupt.restfulExportImportApi.exception.UserNotFound;
 import com.trupt.restfulExportImportApi.model.User;
 import com.trupt.restfulExportImportApi.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
+import com.trupt.restfulExportImportApi.util.UserProcessor;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final UserProcessor userProcessor;
 
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
@@ -40,19 +44,61 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserViewDTO> createUserList(List<UserCreateDTO> userCreateDTOList) {
-        List<User> userList = userCreateDTOList.stream().map(userCreateDTO -> new User(userCreateDTO.getName(),
-                        userCreateDTO.getSurname(), userCreateDTO.getHeight(),
-                        userCreateDTO.getWeight(), userCreateDTO.getBirthdate())).collect(Collectors.toList());
-        List<User> savedUsers = userRepository.saveAll(userList);
-        return savedUsers.stream().map(UserViewDTO::of).collect(Collectors.toList());
+        List<User> userList = userProcessor.convertToUserList(userCreateDTOList, UserCreateDTO.class);
+        return userProcessor.saveAndConvertToDTO(userList);
     }
 
     @Override
     public UserViewDTO updateUser(int id, UserUpdateDTO userUpdateDTO) {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFound("User not found"));
-        user.setName(userUpdateDTO.getName());
-        user.setSurname(userUpdateDTO.getSurname());
-        user.setWeight(userUpdateDTO.getWeight());
+
+        Field[] fields = UserUpdateDTO.class.getDeclaredFields();
+        for (Field field : fields) {
+            try {
+                field.setAccessible(true);
+                Object value = field.get(userUpdateDTO);
+                if (value == null){
+                    throw new IllegalArgumentException(field.getName() + " cannot be null");
+                }
+                System.out.println("Updating field: " + field.getName() + " with value: " + value);
+                Field userField = User.class.getDeclaredField(field.getName());
+                userField.setAccessible(true);
+                userField.set(user, value);
+            } catch (NoSuchFieldException e) {
+                throw new ReflectionUpdateException("Field not found in User entity: " + field.getName(), e);
+            } catch (IllegalAccessException e) {
+                throw new ReflectionUpdateException("Unable to update field: " + field.getName(), e);
+            } finally {
+                field.setAccessible(false);
+            }
+        }
+        User updatedUser = userRepository.save(user);
+        return UserViewDTO.of(updatedUser);
+    }
+
+    @Override
+    public UserViewDTO patchUser(int id, UserUpdateDTO userUpdateDTO) {
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFound("User not found"));
+
+        Field[] fields = UserUpdateDTO.class.getDeclaredFields();
+        for (Field field : fields) {
+            try {
+                field.setAccessible(true);
+                Object value = field.get(userUpdateDTO);
+                if (value != null) {
+                    System.out.println("Updating field: " + field.getName() + " with value: " + value);
+                    Field userField = User.class.getDeclaredField(field.getName());
+                    userField.setAccessible(true);
+                    userField.set(user, value);
+                }
+            } catch (NoSuchFieldException e) {
+                throw new ReflectionUpdateException("Field not found in User entity: " + field.getName(), e);
+            } catch (IllegalAccessException e) {
+                throw new ReflectionUpdateException("Unable to update field: " + field.getName(), e);
+            } finally {
+                field.setAccessible(false);
+            }
+        }
         User updatedUser = userRepository.save(user);
         return UserViewDTO.of(updatedUser);
     }

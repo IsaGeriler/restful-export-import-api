@@ -13,7 +13,7 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Exporter-Importer REST API w/Swagger-UI")
+                        .title("Exporter/Importer: REST API Documentation [OpenAPI 3.0]")
                         .version("1.0.0")
                         .description("REST API project which exports data from an entity, from database to an .xlsx file " +
                                 "(internationalized) and import the data from the given .xlsx file to the database of " +

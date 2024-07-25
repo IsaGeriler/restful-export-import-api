@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,7 @@ import java.util.Locale;
 import java.util.Set;
 
 @RestController
-@RequiredArgsConstructor
+@AllArgsConstructor
 @RequestMapping("api/export")
 @Tag(name = "Export", description = "Operations related for exporting data from a database to an Excel file.")
 public class ExportApi {
@@ -32,7 +32,7 @@ public class ExportApi {
     // Supported I18N language codes of this APIs current iteration
     private static final Set<String> SUPPORTED_LANGUAGES = Set.of("en", "es", "ja", "tr");
 
-    @GetMapping("/user")
+    @GetMapping("/users")
     @Operation(
             summary = "Export user data from a database to an Excel file.",
             description = "Returns a downloadable Excel file of the exported user data from a database, " +

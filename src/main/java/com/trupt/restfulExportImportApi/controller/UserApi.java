@@ -3,44 +3,51 @@ package com.trupt.restfulExportImportApi.controller;
 import com.trupt.restfulExportImportApi.dto.UserCreateDTO;
 import com.trupt.restfulExportImportApi.dto.UserUpdateDTO;
 import com.trupt.restfulExportImportApi.dto.UserViewDTO;
+import com.trupt.restfulExportImportApi.exception.ReflectionUpdateException;
+import com.trupt.restfulExportImportApi.exception.UserNotFound;
 import com.trupt.restfulExportImportApi.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("/api/user")
-@RequiredArgsConstructor
+@RequestMapping("/api/users")
+@AllArgsConstructor
 @Tag(name = "Users", description = "Endpoints for managing users, including CRUD operations, to create, retrieve, update, and delete user records.")
 public class UserApi {
     private final UserService userService;
 
-    @GetMapping
-    @ResponseStatus(code = HttpStatus.OK)
+    @GetMapping("/get")
     @Operation(summary = "Get all users",
                description = "Retrieve a list of all users.",
                responses = {
                    @ApiResponse(responseCode = "200", description = "List of users successfully retrieved", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserViewDTO.class, type = "array"))),
                    @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(type = "string")))
                })
-    public List<UserViewDTO> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<?> getAllUsers() {
+        try {
+            return ResponseEntity.ok(userService.getAllUsers());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
-    @GetMapping("/{id}")
-    @ResponseStatus(code = HttpStatus.OK)
+    @GetMapping("/get/{id}")
     @Operation(summary = "Get a user by ID",
                description = "Retrieve a particular user by their ID.",
                responses = {
@@ -48,12 +55,15 @@ public class UserApi {
                    @ApiResponse(responseCode = "404", description = "User not found", content = @Content(mediaType = "application/json", schema = @Schema(type = "string"))),
                    @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(type = "string")))
                })
-    public UserViewDTO getUserById(@PathVariable int id) {
-        return userService.getUserById(id);
+    public ResponseEntity<?> getUserById(@PathVariable int id) {
+        try {
+            return ResponseEntity.ok(userService.getUserById(id));
+        } catch (UserNotFound e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
-    @PostMapping
-    @ResponseStatus(code = HttpStatus.CREATED)
+    @PostMapping("/create")
     @Operation(summary = "Create a user",
                description = "Create a new user with the provided details.",
                responses = {
@@ -61,12 +71,17 @@ public class UserApi {
                    @ApiResponse(responseCode = "400", description = "Bad request due to invalid input", content = @Content(mediaType = "application/json", schema = @Schema(type = "string"))),
                    @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(type = "string")))
                })
-    public UserViewDTO createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
-        return userService.createUser(userCreateDTO);
+    public ResponseEntity<?> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userCreateDTO));
+        } catch (ConstraintViolationException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation errors: " + e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
-    @PostMapping("/list")
-    @ResponseStatus(code = HttpStatus.CREATED)
+    @PostMapping("/create/list")
     @Operation(summary = "Create multiple users",
                description = "Create multiple users from a given list of user details.",
                responses = {
@@ -74,57 +89,100 @@ public class UserApi {
                    @ApiResponse(responseCode = "400", description = "Bad request due to invalid input", content = @Content(mediaType = "application/json", schema = @Schema(type = "string"))),
                    @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(type = "string")))
                })
-    public List<UserViewDTO> createUserList(@Valid @RequestBody List<UserCreateDTO> userCreateDTOList) {
-        return userService.createUserList(userCreateDTOList);
+    public ResponseEntity<?> createUserList(@Valid @RequestBody List<UserCreateDTO> userCreateDTOList) {
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUserList(userCreateDTOList));
+        } catch (ConstraintViolationException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation errors: " + e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
-    @PutMapping("/{id}")
-    @ResponseStatus(code = HttpStatus.OK)
+    @PutMapping("/update/{id}")
     @Operation(summary = "Update a user by ID",
                description = "Update details of a particular user by their ID.",
                responses = {
                    @ApiResponse(responseCode = "200", description = "User successfully updated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserViewDTO.class, type = "array"))),
                    @ApiResponse(responseCode = "400", description = "Bad request due to invalid input", content = @Content(mediaType = "application/json", schema = @Schema(type = "string"))),
                    @ApiResponse(responseCode = "404", description = "User not found", content = @Content(mediaType = "application/json", schema = @Schema(type = "string"))),
-                   @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(type = "string")))
-              })
-    public UserViewDTO updateUser(@PathVariable int id, @RequestBody UserUpdateDTO userUpdateDTO) {
-        return userService.updateUser(id, userUpdateDTO);
+               })
+    public ResponseEntity<?> updateUser(@PathVariable int id, @Valid @RequestBody UserUpdateDTO userUpdateDTO) {
+        try {
+            return ResponseEntity.ok(userService.updateUser(id, userUpdateDTO));
+        } catch (UserNotFound e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (ConstraintViolationException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation errors: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cannot leave a field empty/null: " + e.getMessage());
+        } catch (ReflectionUpdateException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal error: " + e.getMessage());
+        }
     }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(code = HttpStatus.ACCEPTED)
+    @PatchMapping("/patch/{id}")
+    @Operation(summary = "Partially update a user by ID",
+               description = "Update specific details of a user by their ID. Only the fields provided in the request will be updated, leaving other fields unchanged.",
+               responses = {
+                    @ApiResponse(responseCode = "200", description = "User successfully updated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserViewDTO.class, type = "array"))),
+                    @ApiResponse(responseCode = "400", description = "Bad request due to invalid input", content = @Content(mediaType = "application/json", schema = @Schema(type = "string"))),
+                    @ApiResponse(responseCode = "404", description = "User not found", content = @Content(mediaType = "application/json", schema = @Schema(type = "string"))),
+                    @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(type = "string")))
+              })
+    public ResponseEntity<?> patchUser(@PathVariable int id, @Valid @RequestBody UserUpdateDTO userUpdateDTO) {
+        try {
+            UserViewDTO patchedUser = userService.patchUser(id, userUpdateDTO);
+            return ResponseEntity.ok(patchedUser);
+        } catch (UserNotFound e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (ConstraintViolationException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation errors: " + e.getMessage());
+        } catch (ReflectionUpdateException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal error: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/delete/{id}")
     @Operation(summary = "Delete a user by ID",
                description = "Delete a particular user by their ID.",
                responses = {
                    @ApiResponse(responseCode = "202", description = "User successfully deleted", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserViewDTO.class, type = "array"))),
                    @ApiResponse(responseCode = "404", description = "User not found", content = @Content(mediaType = "application/json", schema = @Schema(type = "string"))),
-                   @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(type = "string")))
                })
-    public UserViewDTO deleteUser(@PathVariable int id) {
-        return userService.deleteUser(id);
+    public ResponseEntity<?> deleteUser(@PathVariable int id) {
+        try {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.deleteUser(id));
+        } catch (UserNotFound e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @GetMapping("/slice")
-    @ResponseStatus(code = HttpStatus.OK)
     @Operation(summary = "Get users with pagination",
                description = "Retrieve a paged list of users.",
                responses = {
                    @ApiResponse(responseCode = "200", description = "List of users successfully retrieved", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserViewDTO.class, type = "array"))),
                    @ApiResponse(responseCode = "400", description = "Bad request due to invalid parameters", content = @Content(mediaType = "application/json", schema = @Schema(type = "string"))),
                    @ApiResponse(responseCode = "404", description = "Page not found or no content available", content = @Content(mediaType = "application/json", schema = @Schema(type = "string"))),
-                   @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(type = "string")))
                })
-    public List<UserViewDTO> slice(@RequestParam int page, @RequestParam int size, @RequestParam(required = false) String sort) {
-        if (page < 0 || size <= 0) throw new IllegalArgumentException("Page number must be >= 0 and size must be > 0.");
+    public ResponseEntity<?> slice(@RequestParam int page, @RequestParam int size, @RequestParam(required = false) String sort) {
+        if (page < 0)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request due to invalid parameter: " + page);
 
+        if (size <= 0)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request due to invalid parameter: " + size);
+        List<String> validSortProperties = Arrays.stream(UserViewDTO.class.getDeclaredFields())
+                                                 .map(Field::getName)
+                                                 .toList();
+
+        if (sort != null && !validSortProperties.contains(sort))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid sort property: " + sort);
         Pageable pageable = PageRequest.of(page, size, sort != null ? Sort.by(sort) : Sort.unsorted());
         List<UserViewDTO> pagedUserList = userService.slice(pageable);
 
-        if (pagedUserList.isEmpty()) {
-            throw new NoSuchElementException("No users found for the specified page and size.");
-        }
-
-        return pagedUserList;
+        if (pagedUserList.isEmpty())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Page not found or no content available");
+        return ResponseEntity.ok(pagedUserList);
     }
 }

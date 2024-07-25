@@ -13,6 +13,7 @@ public interface UserService {
     UserViewDTO createUser(UserCreateDTO userCreateDTO);
     List<UserViewDTO> createUserList(List<UserCreateDTO> userCreateDTOList);
     UserViewDTO updateUser(int id, UserUpdateDTO userUpdateDTO);
+    UserViewDTO patchUser(int id, UserUpdateDTO userUpdateDTO);
     UserViewDTO deleteUser(int id);
     List<UserViewDTO> slice(Pageable pageable);
 }

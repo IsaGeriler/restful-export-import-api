@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +18,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
+@AllArgsConstructor
 @RequestMapping("api/import")
 @Tag(name = "Import", description = "Operations related for importing data from an Excel file to a database.")
 public class ImportApi {
     private final ImportService importService;
 
-    @PostMapping(path = "/user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "/users", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Import user data from an Excel file to a database.",
                description = "Imports user data from an Excel file into a database, " +
                              "validating and mapping the data according to the defined schema. " +

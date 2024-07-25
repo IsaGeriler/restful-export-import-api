@@ -21,7 +21,7 @@ public class UserViewDTO {
     private int age;
 
     @ExcelCellHeader(headerName="userHeight", isRequired = true, calculateAverage = true)
-    private int height;
+    private Integer height;
 
     @ExcelCellHeader(headerName="userWeight", isRequired = true, calculateAverage = true)
     private BigDecimal weight;
@@ -30,7 +30,11 @@ public class UserViewDTO {
     private LocalDate birthdate;
 
     public static UserViewDTO of(User user) {
-        return new UserViewDTO(user.getName(), user.getSurname(), user.getAge(),
-                user.getHeight(), user.getWeight(), user.getBirthdate());
+        return new UserViewDTO(user.getName(),
+                               user.getSurname(),
+                               user.getAge(),
+                               user.getHeight(),
+                               user.getWeight(),
+                               user.getBirthdate());
     }
 }

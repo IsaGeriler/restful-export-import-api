@@ -2,9 +2,9 @@ package com.trupt.restfulExportImportApi.service;
 
 import com.trupt.restfulExportImportApi.dto.UserViewDTO;
 import com.trupt.restfulExportImportApi.model.User;
-import com.trupt.restfulExportImportApi.repository.UserRepository;
 
-import lombok.RequiredArgsConstructor;
+import com.trupt.restfulExportImportApi.util.UserProcessor;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.trupt.utils.ImporterUtil;
@@ -14,12 +14,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class ImportServiceImpl implements ImportService {
-    private final UserRepository userRepository;
+    private final UserProcessor userProcessor;
     private final ImporterUtil importerUtil;
 
     @Override
@@ -29,13 +28,9 @@ public class ImportServiceImpl implements ImportService {
         file.transferTo(tempFile);
 
         List<?> importedList = importerUtil.importFile(tempFile, type);
-
         if (UserViewDTO.class.equals(type)) {
-            List<UserViewDTO> dtoList = (List<UserViewDTO>) importedList;
-            List<User> userList = dtoList.stream().map(dto -> new User(dto.getName(), dto.getSurname(),
-                    dto.getHeight(), dto.getWeight(), dto.getBirthdate())).collect(Collectors.toList());
-            List<User> savedUsers = userRepository.saveAll(userList);
-            return savedUsers.stream().map(UserViewDTO::of).collect(Collectors.toList());
+            List<User> userList = userProcessor.convertToUserList(importedList, UserViewDTO.class);
+            return userProcessor.saveAndConvertToDTO(userList);
         }
         throw new IllegalArgumentException("Passed object type of the list is not User!");
     }
