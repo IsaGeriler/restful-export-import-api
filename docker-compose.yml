@@ -16,6 +16,8 @@ services:
       - SPRING_PROFILES_ACTIVE=mysql
     networks:
       - app-network
+    depends_on:
+      - mysql
 
   postgresql:
     image: postgres:latest
