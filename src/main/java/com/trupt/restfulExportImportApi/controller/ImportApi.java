@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @AllArgsConstructor
@@ -45,7 +50,14 @@ public class ImportApi {
 
         try {
             List<UserViewDTO> importedUsers = importService.importUserFile(file, UserViewDTO.class);
-            return ResponseEntity.ok(importedUsers);
+            importedUsers.forEach(user -> {
+                user.add(linkTo(methodOn(UserApi.class).getUserById(user.getId())).withSelfRel());
+                user.add(linkTo(methodOn(UserApi.class).updateUser(user.getId(), null)).withRel("update"));
+                user.add(linkTo(methodOn(UserApi.class).patchUser(user.getId(), null)).withRel("patch"));
+                user.add(linkTo(methodOn(UserApi.class).deleteUser(user.getId())).withRel("delete"));
+            });
+            Link allUsersLink = linkTo(methodOn(UserApi.class).getAllUsers()).withSelfRel();
+            return ResponseEntity.ok(CollectionModel.of(importedUsers, allUsersLink));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The uploaded file may be missing required data or in an incorrect format.");
         } catch (RuntimeException e) {
