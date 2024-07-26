@@ -22,7 +22,7 @@ services:
   postgresql:
     image: postgres:latest
     container_name: postgres_server
-    restart: no
+    restart: "no"
     environment:
       POSTGRES_DB: api_project_db_docker
       POSTGRES_USER: multiservice
