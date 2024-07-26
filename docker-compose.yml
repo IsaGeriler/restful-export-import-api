@@ -22,7 +22,7 @@ services:
   postgresql:
     image: postgres:latest
     container_name: postgres_server
-    restart: always
+    restart: no
     environment:
       POSTGRES_DB: api_project_db_docker
       POSTGRES_USER: multiservice
@@ -37,6 +37,7 @@ services:
   mysql:
     image: mysql:8
     container_name: mysql-server
+    restart: always
     environment:
       MYSQL_DATABASE: api_project_mysqldb_docker
       MYSQL_USER: multiservice
