@@ -17,6 +17,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +27,9 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @RestController
 @RequestMapping("/api/users")
 @AllArgsConstructor
@@ -32,7 +37,7 @@ import java.util.List;
 public class UserApi {
     private final UserService userService;
 
-    @GetMapping("/get")
+    @GetMapping
     @Operation(summary = "Get all users",
                description = "Retrieve a list of all users.",
                responses = {
@@ -41,13 +46,21 @@ public class UserApi {
                })
     public ResponseEntity<?> getAllUsers() {
         try {
-            return ResponseEntity.ok(userService.getAllUsers());
+            List<UserViewDTO> users = userService.getAllUsers();
+            users.forEach(user -> {
+                user.add(linkTo(methodOn(UserApi.class).getUserById(user.getId())).withSelfRel());
+                user.add(linkTo(methodOn(UserApi.class).updateUser(user.getId(), null)).withRel("update"));
+                user.add(linkTo(methodOn(UserApi.class).patchUser(user.getId(), null)).withRel("patch"));
+                user.add(linkTo(methodOn(UserApi.class).deleteUser(user.getId())).withRel("delete"));
+            });
+            Link allUsersLink = linkTo(methodOn(UserApi.class).getAllUsers()).withSelfRel();
+            return ResponseEntity.ok(CollectionModel.of(users, allUsersLink));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
-    @GetMapping("/get/{id}")
+    @GetMapping("/{id}")
     @Operation(summary = "Get a user by ID",
                description = "Retrieve a particular user by their ID.",
                responses = {
@@ -57,13 +70,18 @@ public class UserApi {
                })
     public ResponseEntity<?> getUserById(@PathVariable int id) {
         try {
-            return ResponseEntity.ok(userService.getUserById(id));
+            UserViewDTO user = userService.getUserById(id);
+            user.add(linkTo(methodOn(UserApi.class).getUserById(user.getId())).withSelfRel());
+            user.add(linkTo(methodOn(UserApi.class).updateUser(user.getId(), null)).withRel("update"));
+            user.add(linkTo(methodOn(UserApi.class).patchUser(user.getId(), null)).withRel("patch"));
+            user.add(linkTo(methodOn(UserApi.class).deleteUser(user.getId())).withRel("delete"));
+            return ResponseEntity.ok(user);
         } catch (UserNotFound e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
-    @PostMapping("/create")
+    @PostMapping
     @Operation(summary = "Create a user",
                description = "Create a new user with the provided details.",
                responses = {
@@ -73,7 +91,12 @@ public class UserApi {
                })
     public ResponseEntity<?> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userCreateDTO));
+            UserViewDTO user = userService.createUser(userCreateDTO);
+            user.add(linkTo(methodOn(UserApi.class).getUserById(user.getId())).withSelfRel());
+            user.add(linkTo(methodOn(UserApi.class).updateUser(user.getId(), null)).withRel("update"));
+            user.add(linkTo(methodOn(UserApi.class).patchUser(user.getId(), null)).withRel("patch"));
+            user.add(linkTo(methodOn(UserApi.class).deleteUser(user.getId())).withRel("delete"));
+            return ResponseEntity.status(HttpStatus.CREATED).body(user);
         } catch (ConstraintViolationException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation errors: " + e.getMessage());
         } catch (RuntimeException e) {
@@ -81,7 +104,7 @@ public class UserApi {
         }
     }
 
-    @PostMapping("/create/list")
+    @PostMapping("/list")
     @Operation(summary = "Create multiple users",
                description = "Create multiple users from a given list of user details.",
                responses = {
@@ -91,7 +114,15 @@ public class UserApi {
                })
     public ResponseEntity<?> createUserList(@Valid @RequestBody List<UserCreateDTO> userCreateDTOList) {
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUserList(userCreateDTOList));
+            List<UserViewDTO> createdUsers = userService.createUserList(userCreateDTOList);
+            createdUsers.forEach(user -> {
+                user.add(linkTo(methodOn(UserApi.class).getUserById(user.getId())).withSelfRel());
+                user.add(linkTo(methodOn(UserApi.class).updateUser(user.getId(), null)).withRel("update"));
+                user.add(linkTo(methodOn(UserApi.class).patchUser(user.getId(), null)).withRel("patch"));
+                user.add(linkTo(methodOn(UserApi.class).deleteUser(user.getId())).withRel("delete"));
+            });
+            Link allUsersLink = linkTo(methodOn(UserApi.class).getAllUsers()).withSelfRel();
+            return ResponseEntity.ok(CollectionModel.of(createdUsers, allUsersLink));
         } catch (ConstraintViolationException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation errors: " + e.getMessage());
         } catch (RuntimeException e) {
@@ -99,7 +130,7 @@ public class UserApi {
         }
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     @Operation(summary = "Update a user by ID",
                description = "Update details of a particular user by their ID.",
                responses = {
@@ -109,7 +140,11 @@ public class UserApi {
                })
     public ResponseEntity<?> updateUser(@PathVariable int id, @Valid @RequestBody UserUpdateDTO userUpdateDTO) {
         try {
-            return ResponseEntity.ok(userService.updateUser(id, userUpdateDTO));
+            UserViewDTO user = userService.updateUser(id, userUpdateDTO);
+            user.add(linkTo(methodOn(UserApi.class).getUserById(user.getId())).withSelfRel());
+            user.add(linkTo(methodOn(UserApi.class).patchUser(user.getId(), null)).withRel("patch"));
+            user.add(linkTo(methodOn(UserApi.class).deleteUser(user.getId())).withRel("delete"));
+            return ResponseEntity.ok(user);
         } catch (UserNotFound e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (ConstraintViolationException e) {
@@ -121,7 +156,7 @@ public class UserApi {
         }
     }
 
-    @PatchMapping("/patch/{id}")
+    @PatchMapping("/{id}")
     @Operation(summary = "Partially update a user by ID",
                description = "Update specific details of a user by their ID. Only the fields provided in the request will be updated, leaving other fields unchanged.",
                responses = {
@@ -132,8 +167,11 @@ public class UserApi {
               })
     public ResponseEntity<?> patchUser(@PathVariable int id, @Valid @RequestBody UserUpdateDTO userUpdateDTO) {
         try {
-            UserViewDTO patchedUser = userService.patchUser(id, userUpdateDTO);
-            return ResponseEntity.ok(patchedUser);
+            UserViewDTO user = userService.patchUser(id, userUpdateDTO);
+            user.add(linkTo(methodOn(UserApi.class).getUserById(user.getId())).withSelfRel());
+            user.add(linkTo(methodOn(UserApi.class).updateUser(user.getId(), null)).withRel("update"));
+            user.add(linkTo(methodOn(UserApi.class).deleteUser(user.getId())).withRel("delete"));
+            return ResponseEntity.ok(user);
         } catch (UserNotFound e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (ConstraintViolationException e) {
@@ -143,7 +181,7 @@ public class UserApi {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     @Operation(summary = "Delete a user by ID",
                description = "Delete a particular user by their ID.",
                responses = {

@@ -1,5 +1,6 @@
 package com.trupt.restfulExportImportApi.dto;
 
+import org.springframework.hateoas.RepresentationModel;
 import org.trupt.annotation.ExcelCellHeader;
 import com.trupt.restfulExportImportApi.model.User;
 import lombok.*;
@@ -10,7 +11,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class UserViewDTO {
+public class UserViewDTO extends RepresentationModel<UserViewDTO> {
+    private int id;
+
     @ExcelCellHeader(headerName="userName", isRequired = true)
     private String name;
 
@@ -30,7 +33,8 @@ public class UserViewDTO {
     private LocalDate birthdate;
 
     public static UserViewDTO of(User user) {
-        return new UserViewDTO(user.getName(),
+        return new UserViewDTO(user.getId(),
+                               user.getName(),
                                user.getSurname(),
                                user.getAge(),
                                user.getHeight(),
