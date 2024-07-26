@@ -18,21 +18,22 @@ services:
       - app-network
     depends_on:
       - mysql
+      # - postgresql
 
-  postgresql:
-    image: postgres:latest
-    container_name: postgres_server
-    restart: "no"
-    environment:
-      POSTGRES_DB: api_project_db_docker
-      POSTGRES_USER: multiservice
-      POSTGRES_PASSWORD: 123456
-    ports:
-      - "5432:5432"
-    networks:
-      - app-network
-    volumes:
-      - postgres:/data/postgres
+  # postgresql:
+  #   image: postgres:latest
+  #   container_name: postgres_server
+  #   restart: always
+  #   environment:
+  #     POSTGRES_DB: api_project_db_docker
+  #     POSTGRES_USER: multiservice
+  #     POSTGRES_PASSWORD: 123456
+  #   ports:
+  #     - "5432:5432"
+  #   networks:
+  #     - app-network
+  #   volumes:
+  #     - postgres:/data/postgres
 
   mysql:
     image: mysql:8
@@ -56,5 +57,5 @@ networks:
 
 volumes:
   data:
-  postgres:
+  # postgres:
   mysql:
