@@ -54,7 +54,7 @@ public class UserApi {
                 user.add(linkTo(methodOn(UserApi.class).deleteUser(user.getId())).withRel("delete"));
             });
             Link allUsersLink = linkTo(methodOn(UserApi.class).getAllUsers()).withSelfRel();
-            Link exportLink = linkTo(methodOn(ExportApi.class).exportToFile(null, null, null)).withRel("export");
+            Link exportLink = linkTo(methodOn(ExportApi.class).exportToFile("", null, null)).withRel("export");
             return ResponseEntity.ok(CollectionModel.of(users, allUsersLink, exportLink));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
