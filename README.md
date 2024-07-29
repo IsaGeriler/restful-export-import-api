@@ -530,7 +530,7 @@ The response will be an Excel file with the data in tabular format.
 
 #### Internationalization (i18n)
 
-This API supports internationalization (i18n) for Excel export headers. Use `lang` parameter in requesting URL/URI to specify the desired language (default is set to en (English)). [Refer here for all language codes supported in i18n format.](https://www.w3.org/International/O-charset-lang.html)
+- This API supports internationalization (i18n) for Excel export headers. Use `lang` parameter in requesting URL/URI to specify the desired language (default is set to en (English)). [Refer here for all language codes supported in i18n format.](https://www.w3.org/International/O-charset-lang.html)
 
 #### 2. Import Users from Excel
 
