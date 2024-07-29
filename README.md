@@ -519,7 +519,7 @@ file: [Excel file]
 
 The API supports internationalization for Excel export headers. Use `lang` parameter in requesting URL/URI to specify the desired language (default is set to English).
 
-### Docker Configuration
+## Docker Configuration
 
 The `docker-compose.yml` and `Dockerfile` files are already present and configured to run the `restful-export-import-api` service with either MySQL or PostgreSQL database.
 This initial commit has active profile set to MySQL and commented out PostgreSQL to not create and run unnecessary container however you can change the active profile and
