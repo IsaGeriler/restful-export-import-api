@@ -123,7 +123,7 @@ public class UserApi {
                 createdUser.add(linkTo(methodOn(UserApi.class).deleteUser(createdUser.getId())).withRel("delete"));
             });
             Link allUsersLink = linkTo(methodOn(UserApi.class).getAllUsers()).withSelfRel();
-            return ResponseEntity.ok(CollectionModel.of(createdUsers, allUsersLink));
+            return ResponseEntity.status(HttpStatus.CREATED).body(CollectionModel.of(createdUsers, allUsersLink));
         } catch (ConstraintViolationException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation errors: " + e.getMessage());
         } catch (RuntimeException e) {
