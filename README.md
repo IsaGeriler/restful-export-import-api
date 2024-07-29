@@ -17,7 +17,7 @@ It includes functionality for creating, retrieving, updating, and deleting user 
 - i18n (for internationalization with using `Bundle.properties`)
 
 ## Prerequisites
-- .jar file of the "Excel Exporter Importer" project, and adding it's dependency to pom.xml (refer to. [Excel Exporter Importer](https://github.com/IsaGeriler/excel-exporter-importer))
+- .jar file of the "Excel Exporter Importer" project, and adding it's dependency to pom.xml (Refer to [Excel Exporter Importer](https://github.com/IsaGeriler/excel-exporter-importer).)
 
 ## Docker Configuration
 
@@ -516,9 +516,7 @@ GET /api/users/slice?page=0&size=10&sort=name
 - **Responses:**
   - `200 OK`: Excel file successfully generated and downloaded.
   - `404 Not Found`: Provided language not supported by this application... yet
-  - `500 Internal Server Error`: Error occurred while exporting
-
- data.
+  - `500 Internal Server Error`: Error occurred while exporting data.
 
 **Example Request:**
 
@@ -532,7 +530,7 @@ The response will be an Excel file with the data in tabular format.
 
 #### Internationalization (i18n)
 
-This API supports internationalization (i18n) for Excel export headers. Use `lang` parameter in requesting URL/URI to specify the desired language (default is set to en (English)). [Refer here for all language codes supported in i18n format](https://www.w3.org/International/O-charset-lang.html)
+This API supports internationalization (i18n) for Excel export headers. Use `lang` parameter in requesting URL/URI to specify the desired language (default is set to en (English)). [Refer here for all language codes supported in i18n format.](https://www.w3.org/International/O-charset-lang.html)
 
 #### 2. Import Users from Excel
 
