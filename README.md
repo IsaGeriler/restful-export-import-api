@@ -36,11 +36,7 @@ comment out unused image at any time for `application.properties` and `docker-co
    mvn clean install -DskipTests=true
    ```
 
-   Maven Wrapper
-   ```bash
-   chmod +x mvnw
-   ```
-   
+   Maven Wrapper   
    ```bash
    ./mvnw clean install -DskipTests=true
    ```
