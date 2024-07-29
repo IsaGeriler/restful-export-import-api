@@ -538,9 +538,15 @@ comment out unused image at any time for `application.properties` and `docker-co
    docker-compose up --build
    ```
 
-   This command will build the Docker image for your application (if not already built) and start the services defined in the `docker-compose.yml` file.
+   or by running the container in the background instead/detaching the container
 
-2. **Stopping the Containers**
+   ```bash
+   docker-compose up --build -d
+   ```
+
+   These command will build the Docker image for your application (if not already built) and start the services defined in the `docker-compose.yml` file.
+
+3. **Stopping the Containers**
 
    To stop and remove the containers, run:
 
@@ -550,7 +556,7 @@ comment out unused image at any time for `application.properties` and `docker-co
 
    This command will stop the containers and remove them along with the networks and volumes created.
 
-3. **Viewing Logs**
+4. **Viewing Logs**
 
    To view the logs of the running containers, use:
 
@@ -564,7 +570,7 @@ comment out unused image at any time for `application.properties` and `docker-co
    docker-compose logs restful-export-import-api
    ```
 
-4. **Customizing Docker Setup**
+5. **Customizing Docker Setup**
 
 - **Switching Database Profiles**: The `SPRING_PROFILES_ACTIVE` environment variable is set to `mysql` in the Docker Compose file. Change this to `postgresql` if you want to use PostgreSQL. Uncomment and configure the PostgreSQL service in the `docker-compose.yml` file accordingly. You may have to change the profile from `application.properties` as well if you want to use IntelliJ's Persistence feature, and manage the database from here as well.
 - **Data Persistence**: Volumes are defined for persisting data. Adjust volume configurations as needed based on your application requirements.
