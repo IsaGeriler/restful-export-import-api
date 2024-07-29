@@ -14,7 +14,10 @@ It includes functionality for creating, retrieving, updating, and deleting user 
 - H2, PostgreSQL, MySQL (Database profiling)
 - Log4J (for logging)
 - Spring HATEOAS for API links
-- I18N for internationalization with using `Bundle.properties` 
+- I18N for internationalization with using `Bundle.properties`
+
+## Prerequisites
+- .jar file of the "Excel Exporter Importer" project, and adding it's dependency to pom.xml (refer to. [Excel Exporter Importer](https://github.com/IsaGeriler/excel-exporter-importer))
 
 ## User Management API
 
