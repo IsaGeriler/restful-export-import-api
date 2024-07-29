@@ -565,3 +565,24 @@ comment out unused image at any time for `application.properties` and `docker-co
 
 - **Switching Database Profiles**: The `SPRING_PROFILES_ACTIVE` environment variable is set to `mysql` in the Docker Compose file. Change this to `postgresql` if you want to use PostgreSQL. Uncomment and configure the PostgreSQL service in the `docker-compose.yml` file accordingly. You may have to change the profile from `application.properties` as well if you want to use IntelliJ's Persistence feature, and manage the database from here as well.
 - **Data Persistence**: Volumes are defined for persisting data. Adjust volume configurations as needed based on your application requirements.
+
+## Contributing
+
+1. **Fork the Repository**
+2. **Create a New Branch:**
+   ```bash
+   git checkout -b feature/your-feature
+   ```
+3. **Commit Your Changes:**
+   ```bash
+   git commit -am 'Add new feature'
+   ```
+4. **Push to the Branch:**
+   ```bash
+   git push origin feature/your-feature
+   ```
+5. **Create a Pull Request**
+
+## Contact
+
+For any inquiries, please contact [gerilerisaberk@gmail.com](mailto:gerilerisaberk@gmail.com).
