@@ -27,7 +27,7 @@ comment out unused image at any time for `application.properties` and `docker-co
 
 ### Building and Running the Containers
 
-0. **Build the `.jar` of this project
+0. **Build the `.jar` of this project**
 
    Build the project by executing the below Maven Goal (or from command line by using Maven Wrapper)
 
