@@ -59,7 +59,7 @@ public class ImportApi {
             Link allUsersLink = linkTo(methodOn(UserApi.class).getAllUsers()).withSelfRel();
             return ResponseEntity.ok(CollectionModel.of(importedUsers, allUsersLink));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The uploaded file may be missing required data or in an incorrect format.");
+            return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body("The uploaded file may be missing required data or in an incorrect format.");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The uploaded file may be missing required data.");
         } catch (Exception e) {
