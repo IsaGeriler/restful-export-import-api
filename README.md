@@ -11,13 +11,84 @@ It includes functionality for creating, retrieving, updating, and deleting user 
 - Spring Boot 3.3.2
 - Maven (for building)
 - Docker (for dockerizing the project, and managing MySQL or PostgreSQL databases) 
-- H2, PostgreSQL, MySQL (Database profiling)
+- Database profiling (H2, MySQL, PostgreSQL)
 - Log4J (for logging)
-- Spring HATEOAS for API links
-- I18N for internationalization with using `Bundle.properties`
+- Spring HATEOAS (for API links)
+- i18n (for internationalization with using `Bundle.properties`)
 
 ## Prerequisites
 - .jar file of the "Excel Exporter Importer" project, and adding it's dependency to pom.xml (refer to. [Excel Exporter Importer](https://github.com/IsaGeriler/excel-exporter-importer))
+
+## Docker Configuration
+
+The `docker-compose.yml` and `Dockerfile` files are already present and configured to run the `restful-export-import-api` service with either MySQL or PostgreSQL database profiles.
+This initial commit has active profile set to MySQL and commented out PostgreSQL to not create and run unnecessary container however you can change the active profile and
+comment out unused image at any time for `application.properties` and `docker-compose.yml` files.
+
+### Building and Running the Containers
+
+0. **Build the `.jar` of this project
+
+   Build the project by executing the below Maven Goal (or from command line by using Maven Wrapper)
+
+   Maven
+   ```bash
+   mvn clean install -DskipTests=true
+   ```
+
+   Maven Wrapper
+   ```bash
+   chmod +x mvnw
+   ```
+   
+   ```bash
+   ./mvnw clean install -DskipTests=true
+   ```
+
+2. **Build and Start Containers**
+
+   Run the following command to build and start the containers:
+
+   ```bash
+   docker-compose up --build
+   ```
+
+   or by running the container in the background instead/detaching the container
+
+   ```bash
+   docker-compose up --build -d
+   ```
+
+   These command will build the Docker image for your application (if not already built) and start the services defined in the `docker-compose.yml` file.
+
+3. **Stopping the Containers**
+
+   To stop and remove the containers, run:
+
+   ```bash
+   docker-compose down
+   ```
+
+   This command will stop the containers and remove them along with the networks and volumes created.
+
+4. **Viewing Logs**
+
+   To view the logs of the running containers, use:
+
+   ```bash
+   docker-compose logs
+   ```
+
+   For logs of a specific service, use:
+
+   ```bash
+   docker-compose logs restful-export-import-api
+   ```
+
+5. **Customizing Docker Setup**
+
+- **Switching Database Profiles**: The `SPRING_PROFILES_ACTIVE` environment variable is set to `mysql` in the Docker Compose file. Change this to `postgresql` if you want to use PostgreSQL. Uncomment and configure the PostgreSQL service in the `docker-compose.yml` file accordingly. You may have to change the profile from `application.properties` as well if you want to use IntelliJ's Persistence feature, and manage the database from here as well.
+- **Data Persistence**: Volumes are defined for persisting data. Adjust volume configurations as needed based on your application requirements.
 
 ## User Management API
 
@@ -521,59 +592,6 @@ file: [Excel file]
 ## Localization (i18n)
 
 The API supports internationalization for Excel export headers. Use `lang` parameter in requesting URL/URI to specify the desired language (default is set to English).
-
-## Docker Configuration
-
-The `docker-compose.yml` and `Dockerfile` files are already present and configured to run the `restful-export-import-api` service with either MySQL or PostgreSQL database.
-This initial commit has active profile set to MySQL and commented out PostgreSQL to not create and run unnecessary container however you can change the active profile and
-comment out unused image at any time for `application.properties` and `docker-compose.yml` files.
-
-### Building and Running the Containers
-
-1. **Build and Start Containers**
-
-   Run the following command to build and start the containers:
-
-   ```bash
-   docker-compose up --build
-   ```
-
-   or by running the container in the background instead/detaching the container
-
-   ```bash
-   docker-compose up --build -d
-   ```
-
-   These command will build the Docker image for your application (if not already built) and start the services defined in the `docker-compose.yml` file.
-
-3. **Stopping the Containers**
-
-   To stop and remove the containers, run:
-
-   ```bash
-   docker-compose down
-   ```
-
-   This command will stop the containers and remove them along with the networks and volumes created.
-
-4. **Viewing Logs**
-
-   To view the logs of the running containers, use:
-
-   ```bash
-   docker-compose logs
-   ```
-
-   For logs of a specific service, use:
-
-   ```bash
-   docker-compose logs restful-export-import-api
-   ```
-
-5. **Customizing Docker Setup**
-
-- **Switching Database Profiles**: The `SPRING_PROFILES_ACTIVE` environment variable is set to `mysql` in the Docker Compose file. Change this to `postgresql` if you want to use PostgreSQL. Uncomment and configure the PostgreSQL service in the `docker-compose.yml` file accordingly. You may have to change the profile from `application.properties` as well if you want to use IntelliJ's Persistence feature, and manage the database from here as well.
-- **Data Persistence**: Volumes are defined for persisting data. Adjust volume configurations as needed based on your application requirements.
 
 ## Contributing
 
